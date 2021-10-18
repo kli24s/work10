@@ -6,16 +6,20 @@
 //==================================================================================================
 
 struct population {
+
   char location[100];        // location
   int year;                  // year
   int pop;                   // population (number of people)
   struct population *next;   // next node
+
 };
 
 //==================================================================================================
 
 void print_population(struct population *p) {
+
   printf("The population of %s in %d is %d.\n", p->location, p->year, p->pop);
+
 }
 
 void print_list(struct population *p) {
@@ -31,12 +35,11 @@ void print_list(struct population *p) {
 
 struct population * free_list(struct population *p) {
 
-  struct population *current = p;
   struct population *tmp;
 
-  while (current) {
-    tmp = current;
-    current = current->next;
+  while (p) {
+    tmp = p;
+    p = p->next;
     free(tmp);
   }
 
