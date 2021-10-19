@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 
 //==================================================================================================
 
@@ -9,7 +8,7 @@ struct population {
 
   char location[100];        // location
   int year;                  // year
-  int pop;                   // population (number of people)
+  int population;            // population (number of people)
   struct population *next;   // next node
 
 };
@@ -18,16 +17,19 @@ struct population {
 
 void print_population(struct population *p) {
 
-  printf("The population of %s in %d is %d.\n", p->location, p->year, p->pop);
+  printf("\t{%s, %d, %d}", p->location, p->year, p->population);
 
 }
 
 void print_list(struct population *p) {
 
+  printf("[\n");
   while (p) {
     print_population(p);
+    printf("\n");
     p = p->next;
   }
+  printf("]\n");
 
 }
 
@@ -35,12 +37,12 @@ void print_list(struct population *p) {
 
 struct population * free_list(struct population *p) {
 
-  struct population *tmp;
+  struct population *tmp = p;
 
   while (p) {
-    tmp = p;
     p = p->next;
     free(tmp);
+    tmp = p;
   }
 
   return p;
@@ -49,14 +51,13 @@ struct population * free_list(struct population *p) {
 
 //==================================================================================================
 
-struct population * make_population(char *location, int year, int pop, struct population *next) {
+struct population * make_population(char *location, int year, int population) {
 
   struct population *p = malloc(sizeof(struct population));
 
   strncpy(p->location, location, sizeof(p->location));
   p->year = year;
-  p->pop = pop;
-  p->next = next;
+  p->population = population;
 
   return p;
 
@@ -64,27 +65,41 @@ struct population * make_population(char *location, int year, int pop, struct po
 
 //==================================================================================================
 
-struct population * insert_front(char *location, int year, int pop, struct population *next) {
+struct population * insert_front(char *location, int year, int population, struct population *next) {
 
-  struct population *front = make_population(location, year, pop, next);
+  struct population *front = make_population(location, year, population);
+  front->next = next;
   return front;
 
 }
 
 //==================================================================================================
 
-int main() {
+struct population * remove_node(struct population *front, int population) {
 
-  srand(time(NULL));
-  int rand_year = (rand() % 2000) + 2022;
+  if (front == NULL) return front;
 
-  struct population *europa = make_population("Europa", rand_year, rand(), NULL);
-  struct population *titan = insert_front("Titan", rand_year, rand(), europa);
-  struct population *io = insert_front("Io", rand_year, rand(), titan);
+  if (front->population == population) {
+    struct population *tmp = front->next;
+    free(front);
+    return tmp;
+  }
 
-  print_list(io);
-  free_list(io);
+  else {
+    struct population *front_copy = front;
+    struct population *back = front;
 
-  return 0;
+    while(front) {
+      if (front->population == population) {
+        back->next = front->next;
+        free(front);
+      }
+      back = front;
+      front = front->next;
+    }
+    return front_copy;
+  }
 
 }
+
+//==================================================================================================

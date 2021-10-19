@@ -1,12 +1,15 @@
-all: work10.o
-	gcc -o work10m work10.o
+all: work10p2.o populationlinkedlist.o
+	gcc -o work10p2m work10p2.o populationlinkedlist.o
 
-work09.o: work10.c
-	gcc -c work10.c
+work10p2.o: work10p2.c populationlinkedlist.h
+	gcc -c work10p2.c
+
+populationlinkedlist.o: populationlinkedlist.c populationlinkedlist.h
+	gcc -c populationlinkedlist.c
 
 run:
-	./work10m
+	./work10p2m
 
 clean:
 	rm *.o
-	rm program
+	rm work10p2m
